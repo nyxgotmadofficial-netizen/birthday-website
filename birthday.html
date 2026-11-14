@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#fff0f6">
+<title>A little birthday website</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
+
+<style>
+:root{
+--pink:#f5a9c4;
+--hot:#d96f9a;
+--rose:#ffe3ed;
+--cream:#fffaf7;
+--ink:#684b5a;
+--muted:#987d8b;
+--lilac:#e9dcff;
+--peach:#ffe4d5;
+--shadow:0 24px 70px #bd789329
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+min-height:100vh;
+color:var(--ink);
+font-family:"DM Sans",sans-serif;
+background:
+radial-gradient(circle at 12% 15%,#ffe4ef,transparent 28%),
+radial-gradient(circle at 88% 80%,#eee5ff,transparent 30%),
+var(--cream);
+overflow-x:hidden
+}
+
+button{font:inherit;border:none;cursor:pointer}
+
+button:focus-visible{
+outline:3px solid #c96b99;
+outline-offset:4px
+}
+
+.screen{
+min-height:100vh;
+display:none;
+align-items:center;
+justify-content:center;
+padding:35px 20px;
+text-align:center;
+position:relative;
+isolation:isolate
+}
+
+.screen.active{
+display:flex;
+animation:screenIn .65s ease both
+}
+
+@keyframes screenIn{
+from{opacity:0;transform:translateY(18px)}
+to{opacity:1;transform:translateY(0)}
+}
+
+.screen:before,.screen:after{
+content:"";
+position:absolute;
+border-radius:50%;
+z-index:-1;
+filter:blur(2px);
+pointer-events:none
+}
+
+.screen:before{
+width:240px;height:240px;
+background:#ffe5ef;
+top:7%;left:-120px;opacity:.6
+}
+
+.screen:after{
+width:200px;height:200px;
+background:#eee4ff;
+bottom:4%;right:-100px;opacity:.7
+}
+
+.content{
+width:min(100%,680px);
+position:relative;
+z-index:2
+}
+
+.eyebrow{
+font-size:10px;
+font-weight:800;
+letter-spacing:3px;
+text-transform:uppercase;
+color:var(--hot);
+margin-bottom:18px
+}
+
+h1{
+font:500 clamp(42px,9vw,76px)/1.08 "Playfair Display",serif;
+letter-spacing:-1.5px
+}
+
+h1 span{color:var(--hot);font-style:italic}
+h2{font-family:"Playfair Display",serif}
+
+.subtitle{
+max-width:440px;
+margin:20px auto;
+color:var(--muted);
+font-size:14px;
+line-height:1.9
+}
+
+.main-btn{
+display:inline-flex;
+align-items:center;
+justify-content:center;
+gap:9px;
+margin-top:16px;
+padding:15px 27px;
+border-radius:999px;
+color:white;
+font-size:13px;
+font-weight:800;
+background:linear-gradient(135deg,#e78eae,#ce6e99);
+box-shadow:0 10px 24px #d875963b;
+transition:.25s ease
+}
+
+.main-btn:hover{
+transform:translateY(-4px);
+box-shadow:0 15px 30px #d8759650
+}
+
+.main-btn:active{transform:scale(.97)}
+
+.secondary-btn{
+display:inline-flex;
+justify-content:center;
+align-items:center;
+margin:12px 5px 0;
+padding:13px 23px;
+border-radius:999px;
+background:white;
+border:1px solid #f2d5e1;
+color:var(--hot);
+font-size:12px;
+font-weight:700;
+transition:.2s
+}
+
+.secondary-btn:hover{
+background:#fff0f5;
+transform:translateY(-2px)
+}
+
+.small-note,footer{
+display:block;
+margin-top:18px;
+color:#b99eaa;
+font-size:11px
+}
+
+.decor{
+position:absolute;
+pointer-events:none;
+opacity:.75;
+animation:float 4s ease-in-out infinite;
+z-index:1
+}
+
+.decor:nth-child(even){animation-delay:-2s}
+
+@keyframes float{
+50%{transform:translateY(-17px) rotate(10deg)}
+}
+
+#magicLayer{
+position:fixed;
+inset:0;
+overflow:hidden;
+pointer-events:none;
+z-index:10
+}
+
+.floaty{
+position:absolute;
+bottom:-35px;
+opacity:0;
+animation:floatUp linear forwards
+}
+
+@keyframes floatUp{
+0%{opacity:0;transform:translateY(0) rotate(0)}
+15%{opacity:.65}
+85%{opacity:.55}
+100%{opacity:0;transform:translateY(-115vh) rotate(300deg)}
+}
+
+/* ENVELOPE */
+
+.envelope-wrap{
+width:280px;
+height:190px;
+margin:40px auto 20px;
+position:relative;
+perspective:900px
+}
+
+.envelope{
+position:absolute;
+inset:25px 0 0;
+height:155px;
+background:#f5b5cb;
+border-radius:8px;
+box-shadow:0 18px 35px #c77d9c30;
+transform-style:preserve-3d
+}
+
+.envelope:before{
+content:"";
+position:absolute;
+inset:0;
+background:linear-gradient(135deg,#ffdce8,#f3a7c1);
+clip-path:polygon(0 0,50% 62%,100% 0);
+z-index:3
+}
+
+.envelope:after{
+content:"";
+position:absolute;
+inset:0;
+background:linear-gradient(45deg,#ee9fba,#ffcada);
+clip-path:polygon(0 100%,50% 43%,100% 100%);
+z-index:4
+}
+
+.envelope-flap{
+position:absolute;
+left:0;
+top:0;
+width:100%;
+height:95px;
+background:#f9c5d7;
+clip-path:polygon(0 0,100% 0,50% 100%);
+transform-origin:top center;
+backface-visibility:hidden;
+transition:transform .8s ease;
+z-index:5
+}
+
+.seal{
+position:absolute;
+z-index:6;
+top:92px;
+left:50%;
+transform:translateX(-50%);
+width:37px;
+height:37px;
+display:grid;
+place-items:center;
+border-radius:50%;
+background:#d96f9a;
+color:white;
+font-size:18px;
+box-shadow:0 4px 12px #b75d8240;
+transition:opacity .3s
+}
+
+.envelope.open .envelope-flap{
+transform:rotateX(180deg)
+}
+
+.envelope.open .seal{opacity:0}
+
+.letter-inside{
+position:absolute;
+left:20px;
+right:20px;
+bottom:10px;
+height:120px;
+padding:20px 10px;
+background:white;
+border-radius:8px;
+z-index:2;
+font:italic 17px "Playfair Display",serif;
+color:var(--hot);
+transition:transform .9s ease
+}
+
+.envelope.open .letter-inside{
+transform:translateY(-115px);
+z-index:7
+}
+
+/* LETTER */
+
+.letter-card{
+position:relative;
+text-align:left;
+margin:26px auto 0;
+padding:clamp(25px,6vw,45px);
+background:#fff;
+border:1px solid #f8e2ea;
+border-radius:28px;
+box-shadow:var(--shadow);
+overflow:hidden
+}
+
+.letter-card:before{
+content:"";
+position:absolute;
+width:130px;
+height:130px;
+border-radius:50%;
+background:#fff0f5;
+right:-55px;
+top:-55px
+}
+
+.letter-top{
+text-align:center;
+color:var(--hot);
+font-size:27px;
+margin-bottom:22px
+}
+
+.letter-card h2{
+font-size:27px;
+margin-bottom:18px
+}
+
+.letter-card p{
+font-size:13px;
+line-height:2;
+color:#856d7b;
+margin-bottom:14px;
+position:relative
+}
+
+.signature{
+font:italic 24px "Playfair Display",serif;
+color:var(--hot);
+margin-top:22px
+}
+
+/* CAKE */
+
+.cake-area{
+position:relative;
+width:290px;
+height:265px;
+margin:28px auto 4px
+}
+
+.plate{
+position:absolute;
+bottom:12px;
+left:13px;
+width:264px;
+height:19px;
+border-radius:50%;
+background:linear-gradient(#fff,#ead5df);
+box-shadow:0 8px 14px #bd789322
+}
+
+.cake{
+position:absolute;
+bottom:29px;
+left:43px;
+width:204px;
+height:118px;
+border-radius:14px 14px 24px 24px;
+background:linear-gradient(90deg,#f5a9c2,#f8bfd0 55%,#e994b1);
+box-shadow:inset -9px 0 #df89a8
+}
+
+.cake:before{
+content:"";
+position:absolute;
+top:-2px;
+left:0;
+width:100%;
+height:29px;
+border-radius:50%;
+background:#fff2e9;
+box-shadow:0 5px 0 #f8d7df
+}
+
+.cake:after{
+content:"♡  ✿  ♡";
+position:absolute;
+top:49px;
+width:100%;
+text-align:center;
+color:white;
+font-size:24px
+}
+
+.candle{
+position:absolute;
+bottom:145px;
+left:50%;
+width:11px;
+height:45px;
+z-index:2;
+transform:translateX(-50%);
+border-radius:5px;
+background:repeating-linear-gradient(45deg,#fff 0 5px,#e98eae 5px 10px)
+}
+
+.flame{
+position:absolute;
+z-index:3;
+bottom:185px;
+left:50%;
+width:17px;
+height:25px;
+transform:translateX(-50%);
+border-radius:50% 50% 45% 45%;
+background:linear-gradient(#fff1a8,#ffad43);
+box-shadow:0 0 24px #ffbd62;
+animation:flicker .65s infinite alternate
+}
+
+@keyframes flicker{
+to{transform:translateX(-50%) scale(.8) rotate(6deg)}
+}
+
+.flame.off{display:none}
+
+.cake-message{
+font:500 25px "Playfair Display",serif;
+color:var(--hot);
+margin-top:14px
+}
+
+/* GIFT */
+
+.gift-area{
+width:210px;
+height:205px;
+margin:35px auto 15px;
+position:relative;
+cursor:pointer;
+transition:.3s
+}
+
+.gift-area:hover{
+transform:translateY(-6px) rotate(-2deg)
+}
+
+.gift-box{
+position:absolute;
+bottom:10px;
+left:10px;
+width:190px;
+height:125px;
+border-radius:9px;
+background:linear-gradient(135deg,#f4a5c1,#e786a9);
+box-shadow:0 15px 30px #bd789333
+}
+
+.gift-box:before{
+content:"";
+position:absolute;
+top:0;
+left:79px;
+height:100%;
+width:30px;
+background:#fff0bd
+}
+
+.gift-box:after{
+content:"";
+position:absolute;
+left:0;
+top:50px;
+width:100%;
+height:24px;
+background:#fff0bd
+}
+
+.gift-lid{
+position:absolute;
+left:0;
+bottom:130px;
+width:210px;
+height:35px;
+border-radius:7px;
+background:#ec8eae;
+box-shadow:0 5px 12px #bd789333;
+transition:transform .7s ease;
+z-index:3
+}
+
+.gift-area.open .gift-lid{
+transform:translate(15px,-65px) rotate(17deg)
+}
+
+.gift-message{
+max-width:420px;
+margin:20px auto;
+padding:24px;
+background:white;
+border:1px solid #f7dfeb;
+border-radius:22px;
+box-shadow:var(--shadow);
+display:none;
+animation:screenIn .5s ease
+}
+
+.gift-message.show{display:block}
+
+.gift-message h2{
+color:var(--hot);
+font-size:25px;
+margin-bottom:12px
+}
+
+.gift-message p{
+color:var(--muted);
+font-size:13px;
+line-height:1.9;
+white-space:pre-line
+}
+
+/* CONFETTI */
+
+.confetti{
+position:fixed;
+top:-25px;
+z-index:30;
+pointer-events:none;
+animation:fall 4s linear forwards
+}
+
+@keyframes fall{
+to{transform:translateY(110vh) rotate(720deg);opacity:0}
+}
+
+@media(max-width:480px){
+.screen{padding:25px 17px}
+.letter-card{padding:25px 21px}
+.cake-area{transform:scale(.9);margin-top:18px}
+}
+
+@media(prefers-reduced-motion:reduce){
+*,*:before,*:after{
+animation:none!important;
+transition:none!important;
+scroll-behavior:auto!important
+}
+}
+</style>
+</head>
+
+<body>
+
+<div id="magicLayer" aria-hidden="true"></div>
+
+<!-- WELCOME -->
+
+<section class="screen active" id="start">
+<span class="decor" style="top:12%;left:12%;font-size:28px">♡</span>
+<span class="decor" style="top:20%;right:13%;font-size:30px">✿</span>
+<span class="decor" style="bottom:18%;left:16%;font-size:26px">✧</span>
+<span class="decor" style="bottom:12%;right:12%;font-size:30px">♡</span>
+
+<div class="content">
+<div class="eyebrow">For My Sweetheart!✧</div>
+<h1>Happy birthday,<br><span>Shehzadi♥️.</span></h1>
+<button class="main-btn" onclick="goTo('envelope')">
+Click to open ♡
+</button>
+<span class="small-note">I hope you love it babe!😋🌸</span>
+</div>
+</section>
+
+<!-- ENVELOPE -->
+
+<section class="screen" id="envelope">
+<div class="content">
+<h1>A letter<span>for you.</span></h1>
+<p class="subtitle">I love you so much jaan🌷</p>
+
+<div class="envelope-wrap">
+<div class="envelope" id="envelopeShape">
+<div class="letter-inside">
+Just for youu myy sweeeet baabbyy😋🌸
+</div>
+<div class="envelope-flap"></div>
+<div class="seal">♡</div>
+</div>
+</div>
+
+<button class="main-btn" id="openEnvelope" onclick="handleEnvelopeOpen()">
+Open the envelope 🫶🏻
+</button>
+
+<button class="secondary-btn" id="readLetter" style="display:none" onclick="goTo('letter')">
+Read your letter →
+</button>
+</div>
+</section>
+
+<!-- LETTER -->
+
+<section class="screen" id="letter">
+<span class="decor" style="top:12%;left:10%;font-size:28px">♡</span>
+<span class="decor" style="bottom:12%;right:10%;font-size:30px">✿</span>
+
+<div class="content">
+<div class="eyebrow">A little letter, just for you😋🫶🏻</div>
+<h1>A little <span>love note.</span></h1>
+
+<div class="letter-card">
+<div class="letter-top">♡ &nbsp; ✉ &nbsp; ♡</div>
+
+<h2>HAPPY BIRTHDAY MY BABY🥹💗,</h2>
+
+<p>IIII LLOOOVVVEEEE YOUUU SOOO MUCCHH MYYY CUTTEEE BAAABBYYYYYYY😭💗 IMMM SOO LUCCKKKYY TOOO HAVEEE YOUUUUU😭🌷 YOUU DKK HOWW MUCHH I LOVEEEE YOUUUU😭♥️ IMM HAPPYYY INN MYY LIFEEE BEACUSEEE I HAVEEE YOUU IN MY LIFE!!😭🫶🏻🎀
+YOUUU AREE THEE BESSTTT MYY LOVEEEEEE!!😭🌸 MAYY YOUU LIVEEE A HAPPPYYY AND A LONGG LIFEE😭💗 A LIFE WHERE THERES ONLY ME WITH YOUUU😭🌷
+MAYY YOUU GET ALL THEE THINGSS YOU WANTTT😭🌸 MAYY YOUU SUCCEED INN YOURRR LIFFFFEEEE😭💗 MAYY WEE MARRY EACH OTHER SOOONN😭💗 AND LIVEE A HAPPYYYY LIFEE TOGETHERRR WITH OUR LIL ONESS😭😭♥️🌷</p>
+
+<p>YOUU DONTT KNOWW HOWW LONG I HAVE BEENN WAITING FORR THISS SPECIAL DAYYYYY😭🎀
+I REALLLY LOVVVEEE YOUUU SOO MUCHHH MYY PRINCESSSS😭💗
+YOU AREE THEE ONLYY ONEE I LOVVEEE THEEEE MOOSSTTTTT😭🌸
+JUST THANK YOU SOO MUCHH FOR EVERYYTHINGG YOU HAVE DONE FOR ME MYY DARLINNGG😭🫶🏻 YOU MAKEEE MEE FEEELLL SOOO LOOVVVEEEDD😭♥️ IM SOOOO LUCCKKYY TOO HAVEEE YOUUUU MERRRIIII JAAAANNN😭💗</p>
+
+<p>YOUU AREEE THEE MOSTT PRETTIESTT GURRLL I HAVEEE EVERRR SEENNNNN INN MYY ENTIREEEE LIFFFEEE😭🎀 THEEERESSS NO ONEEE AND CAN NEVER BE PRETTIER THANN YOUU😭🌷 YOUU AREE SOO GORGEOUSSSS😭🌸 AND LOOKS LIKE ANN ANGEELL😭💗
+I LOOOVVVVEEEE EVERRYYTHINNGG ABOUUUTTT YOUUUU😭🫶🏻💗 EVERY LITTLE THING😭🌷EVERRYTHINGSS SO LOVELLYY ABOUTTT YUHHH!😭🌸</p>
+
+<p>YOU ARE JUST MINE AND WILL BE FOREVERRRR😭🥹♥️
+HAPPYYYY BIRTHDAYY AGAINN MERAA PYAARAAA BCHAAAAAA😭🌷💗</p>
+
+<div class="signature">LOTSS OFF LOVEE😭♥️</div>
+</div>
+
+<button class="main-btn" onclick="goTo('cake')">
+Let's celebrate😋🎀→
+</button>
+</div>
+</section>
+
+<!-- CAKE -->
+
+<section class="screen" id="cake">
+<span class="decor" style="top:12%;left:12%;font-size:28px">✧</span>
+<span class="decor" style="top:20%;right:12%;font-size:30px">♡</span>
+<span class="decor" style="bottom:15%;left:13%;font-size:30px">✿</span>
+<span class="decor" style="bottom:12%;right:13%;font-size:27px">♡</span>
+
+<div class="content">
+<div class="eyebrow">A little celebration</div>
+
+<h1>HAPPY BIRTHDAY<span>MY SWEET ONE😋💗</span></h1>
+
+<p class="subtitle">
+I’m so far away from you but we still can celebrate your birthday like this😋🫶🏻.
+</p>
+
+<div class="cake-area">
+<div class="flame" id="flame"></div>
+<div class="candle"></div>
+<div class="cake"></div>
+<div class="plate"></div>
+</div>
+
+<div class="cake-message" id="cakeMessage">
+A cake made just for you ♡
+</div>
+
+<p class="subtitle" id="cakeSub">
+HAPPY BIRTHDAY MY SWEET BABY🥹♥️
+</p>
+
+<button class="main-btn" id="wishButton" onclick="blowCandle()">
+Blow the candle😋
+</button>
+
+<button class="main-btn" id="cakeNext" style="display:none" onclick="goTo('gift')">
+One last thing🥹🫶🏻
+</button>
+</div>
+</section>
+
+<!-- FINAL GIFT -->
+
+<section class="screen" id="gift">
+<div class="content">
+
+<div class="eyebrow">😋💗</div>
+<h1>A little <span>present.</span></h1>
+
+<p class="subtitle">
+Last thing for youuu😋🫶🏻
+</p>
+
+<div class="gift-area" id="giftArea" onclick="openGift()" role="button" tabindex="0" aria-label="Open the gift">
+<div class="gift-box"></div>
+<div class="gift-lid"></div>
+</div>
+
+<button class="main-btn" id="giftButton" onclick="openGift()">
+           Open♡
+</button>
+
+<div class="gift-message" id="giftMessage">
+<h2>FOR MY BABYY😭💗</h2>
+
+<p>YOU ARE WORTHY OF ALL THE LOVE MY BABBYY😭🌸 AND YOU DESERVE THE WHOLE WORLD😭💗 YOUU AREE JUST SOO SWWEETTT😭🌸
+ALWAYSS LIVEE HAPPILYY😭🌷 IM ALWAYSS HEREEE FORR YOUUY MYY SWEETHEARTT😭🌸 AS YOU ARE MY WIFEE😭💗
+AND I’M SO PROUDD OF YOUU MYY BAABBYYY😭🌷FOR EVERYTHING YOU DO😭💗 YOU WORK HARD IN STUDIES AND YOU ALSO DO A LOT OF THINGS AT HOME THAT YOU SHOULDNT AT THIS AGE😭 IM SOO PROUF OF YOU MY SWEETT BABBY😭🌸
+
+HAPPY BIRTHDAY AGAIN BCHHHAA😭♥️</p>
+</div>
+
+</div>
+</section>
+
+<script>
+
+/* SCREEN NAVIGATION */
+
+function goTo(id){
+document.querySelectorAll(".screen").forEach(screen=>{
+screen.classList.remove("active");
+});
+document.getElementById(id).classList.add("active");
+window.scrollTo({top:0,behavior:"smooth"});
+if(id==="cake")resetCake();
+}
+
+/* ENVELOPE */
+
+function handleEnvelopeOpen(){
+const envelope=document.getElementById("envelopeShape");
+if(envelope.classList.contains("open"))return;
+envelope.classList.add("open");
+document.getElementById("openEnvelope").style.display="none";
+
+setTimeout(()=>{
+document.getElementById("readLetter").style.display="inline-flex";
+createConfetti(20);
+},800);
+}
+
+/* CAKE */
+
+function blowCandle(){
+document.getElementById("flame").classList.add("off");
+document.getElementById("wishButton").style.display="none";
+document.getElementById("cakeNext").style.display="inline-flex";
+createConfetti(80);
+}
+
+function resetCake(){
+document.getElementById("flame").classList.remove("off");
+document.getElementById("cakeMessage").textContent="A cake made just for you🥹🫶🏻";
+document.getElementById("cakeSub").textContent="HAPPY BIRTHDAY MY SWEET BABY🥹♥️";
+document.getElementById("wishButton").style.display="inline-flex";
+document.getElementById("cakeNext").style.display="none";
+}
+
+/* GIFT */
+
+let giftOpened=false;
+
+function openGift(){
+if(giftOpened)return;
+giftOpened=true;
+
+document.getElementById("giftArea").classList.add("open");
+document.getElementById("giftButton").style.display="none";
+
+setTimeout(()=>{
+document.getElementById("giftMessage").classList.add("show");
+createConfetti(35);
+},650);
+}
+
+document.getElementById("giftArea").addEventListener("keydown",function(event){
+if(event.key==="Enter"||event.key===" "){
+event.preventDefault();
+openGift();
+}
+});
+
+/* FLOATING SYMBOLS */
+
+const floatingSymbols=["♡","✧","✿","♥","✨","⋆"];
+const magicLayer=document.getElementById("magicLayer");
+let floatingInterval=null;
+
+function createFloatingSymbol(){
+if(document.hidden)return;
+
+const symbol=document.createElement("span");
+symbol.className="floaty";
+symbol.textContent=floatingSymbols[Math.floor(Math.random()*floatingSymbols.length)];
+symbol.style.left=Math.random()*100+"vw";
+symbol.style.fontSize=(12+Math.random()*19)+"px";
+symbol.style.color=["#e99bb8","#c5a8df","#f2bd87"][Math.floor(Math.random()*3)];
+
+const duration=7+Math.random()*6;
+symbol.style.animationDuration=duration+"s";
+
+magicLayer.appendChild(symbol);
+setTimeout(()=>symbol.remove(),duration*1000);
+}
+
+function startFloating(){
+if(floatingInterval===null){
+floatingInterval=setInterval(createFloatingSymbol,700);
+}
+}
+
+function stopFloating(){
+if(floatingInterval!==null){
+clearInterval(floatingInterval);
+floatingInterval=null;
+}
+}
+
+document.addEventListener("visibilitychange",()=>{
+if(document.hidden){
+stopFloating();
+}else{
+startFloating();
+}
+});
+
+startFloating();
+
+/* CONFETTI */
+
+function createConfetti(count=45){
+const symbols=["♡","✧","✿","♥","✨"];
+const colors=["#f5a6bd","#f7cf8d","#d8b4e2","#f4a6a6","#b9d9ce"];
+
+const fragment=document.createDocumentFragment();
+
+for(let i=0;i<count;i++){
+const piece=document.createElement("div");
+piece.className="confetti";
+piece.textContent=symbols[Math.floor(Math.random()*symbols.length)];
+piece.style.left=Math.random()*100+"vw";
+piece.style.color=colors[Math.floor(Math.random()*colors.length)];
+piece.style.fontSize=(12+Math.random()*18)+"px";
+piece.style.animationDuration=(2+Math.random()*3)+"s";
+
+fragment.appendChild(piece);
+setTimeout(()=>piece.remove(),5500);
+}
+
+document.body.appendChild(fragment);
+}
+
+</script>
+</body>
+</html>
